@@ -1,0 +1,47 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__laravel-boost__application-info",
+      "mcp__herd__get_site_information",
+      "mcp__laravel-boost__database-schema",
+      "mcp__laravel-boost__list-routes",
+      "mcp__laravel-boost__get-config",
+      "mcp__laravel-boost__get-absolute-url",
+      "Bash(php:*)",
+      "mcp__herd__get_all_php_versions",
+      "Bash(~/.config/herd/bin/php:*)",
+      "Read(//c/Users/abdel/.config/herd/bin/**)",
+      "mcp__laravel-boost__tinker",
+      "Bash(psql:*)",
+      "Bash(where psql)",
+      "Read(//c/Program Files/PostgreSQL//**)",
+      "Bash(\"/c/Program Files/PostgreSQL/17/bin/psql\" --version)",
+      "Bash(\"/c/Program Files/PostgreSQL/17/bin/createdb\" -U postgres lms)",
+      "Bash(\"/c/Program Files/PostgreSQL/17/bin/psql\" -U postgres -c \"CREATE DATABASE lms;\")",
+      "mcp__laravel-boost__database-query",
+      "mcp__laravel-boost__database-connections",
+      "Bash(where php)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan migrate)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:model Subject --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:migration create_courses_table --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:model Course --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:migration create_topics_table --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:model Topic --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:request SubjectRequest --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:request CourseRequest --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:request TopicRequest --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:controller SubjectController --resource --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:controller CourseController --resource --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:controller TopicController --resource --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:policy SubjectPolicy --model=Subject --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:policy CoursePolicy --model=Course --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:policy TopicPolicy --model=Topic --no-interaction)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "laravel-boost",
+    "herd"
+  ]
+}
