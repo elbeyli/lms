@@ -1,0 +1,16 @@
+1- composer install                                          --->to install backend dependacies
+
+2-cp .env.example .env                                       --->create .env file
+
+    2.1 -change app url to what exist in herd
+    2.2 - add the database connection with your local data
+
+3-php artisan storge:link                                    --->used for images
+
+4-php artisan key:generate                                   --->to generate app key
+
+4-php artisan migrate --seed                                 --->create database schema 
+
+5-npm install                                                --->to install node modules
+
+6-npm run dev                                                --->to build the project
