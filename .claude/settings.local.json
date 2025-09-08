@@ -37,7 +37,10 @@
       "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:policy CoursePolicy --model=Course --no-interaction)",
       "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:policy TopicPolicy --model=Topic --no-interaction)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git branch:*)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:controller DashboardController --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:auth --no-interaction)"
     ]
   },
   "enabledMcpjsonServers": [
