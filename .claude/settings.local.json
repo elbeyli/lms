@@ -40,7 +40,15 @@
       "Bash(git add:*)",
       "Bash(git branch:*)",
       "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:controller DashboardController --no-interaction)",
-      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:auth --no-interaction)"
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:auth --no-interaction)",
+      "Bash(git push:*)",
+      "WebFetch(domain:lms.test)",
+      "mcp__laravel-boost__last-error",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan make:controller AuthController --no-interaction)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan route:clear)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan config:clear)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan view:clear)",
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan optimize:clear)"
     ]
   },
   "enabledMcpjsonServers": [
