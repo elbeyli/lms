@@ -48,7 +48,9 @@
       "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan route:clear)",
       "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan config:clear)",
       "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan view:clear)",
-      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan optimize:clear)"
+      "Bash(\"C:\\Users\\abdel\\.config\\herd\\bin\\php.bat\" artisan optimize:clear)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git commit:*)"
     ]
   },
   "enabledMcpjsonServers": [
