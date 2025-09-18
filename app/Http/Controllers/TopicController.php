@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Topic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class TopicController extends Controller
@@ -17,7 +18,7 @@ class TopicController extends Controller
     public function index(Request $request): JsonResponse|View
     {
         $query = Topic::whereHas('course.subject', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', Auth::id());
         })->with(['course:id,subject_id,name', 'course.subject:id,name,color'])
             ->orderBy('difficulty')
             ->orderBy('name');
@@ -52,7 +53,7 @@ class TopicController extends Controller
     public function create(Request $request): View
     {
         $courses = Course::whereHas('subject', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', Auth::id());
         })->with('subject:id,name,color')
             ->where('is_active', true)
             ->orderBy('name')
@@ -61,7 +62,7 @@ class TopicController extends Controller
         $selectedCourseId = $request->course_id;
 
         $availableTopics = Topic::whereHas('course.subject', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', Auth::id());
         })->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'course_id', 'name']);
@@ -72,21 +73,26 @@ class TopicController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TopicRequest $request): JsonResponse
+    public function store(TopicRequest $request)
     {
         $course = Course::whereHas('subject', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', Auth::id());
         })->where('id', $request->course_id)->firstOrFail();
 
         $topic = Topic::create($request->validated());
 
-        $topic->load(['course:id,subject_id,name', 'course.subject:id,name,color']);
+        if ($request->expectsJson()) {
+            $topic->load(['course:id,subject_id,name', 'course.subject:id,name,color']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Topic created successfully.',
+                'data' => $topic,
+            ], 201);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Topic created successfully.',
-            'data' => $topic,
-        ], 201);
+        return redirect()
+            ->route('topics.show', $topic)
+            ->with('success', 'Topic created successfully.');
     }
 
     /**
@@ -116,14 +122,14 @@ class TopicController extends Controller
         $this->authorize('update', $topic);
 
         $courses = Course::whereHas('subject', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', Auth::id());
         })->with('subject:id,name,color')
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'subject_id', 'name']);
 
         $availableTopics = Topic::whereHas('course.subject', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', Auth::id());
         })->where('is_active', true)
             ->where('id', '!=', $topic->id)
             ->orderBy('name')
@@ -140,7 +146,7 @@ class TopicController extends Controller
         $this->authorize('update', $topic);
 
         $course = Course::whereHas('subject', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', Auth::id());
         })->where('id', $request->course_id)->firstOrFail();
 
         $topic->update($request->validated());
@@ -155,16 +161,22 @@ class TopicController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Topic $topic): JsonResponse
+    public function destroy(Topic $topic): JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $this->authorize('delete', $topic);
 
         $topic->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Topic deleted successfully.',
-        ]);
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Topic deleted successfully.',
+            ]);
+        }
+
+        return redirect()
+            ->route('topics.index')
+            ->with('success', 'Topic deleted successfully.');
     }
 
     /**

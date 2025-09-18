@@ -6,6 +6,7 @@ use App\Http\Requests\SubjectRequest;
 use App\Models\Subject;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class SubjectController extends Controller
@@ -15,7 +16,7 @@ class SubjectController extends Controller
      */
     public function index(Request $request): JsonResponse|View
     {
-        $query = Subject::where('user_id', auth()->id())
+        $query = Subject::where('user_id', Auth::id())
             ->with('courses:id,subject_id,name,is_active')
             ->orderBy('name');
 
@@ -46,20 +47,25 @@ class SubjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SubjectRequest $request): JsonResponse
+    public function store(SubjectRequest $request)
     {
         $subject = Subject::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             ...$request->validated(),
         ]);
 
-        $subject->load('courses:id,subject_id,name,is_active');
+        if ($request->expectsJson()) {
+            $subject->load('courses:id,subject_id,name,is_active');
+            return response()->json([
+                'success' => true,
+                'message' => 'Subject created successfully.',
+                'data' => $subject,
+            ], 201);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Subject created successfully.',
-            'data' => $subject,
-        ], 201);
+        return redirect()
+            ->route('subjects.show', $subject)
+            ->with('success', 'Subject created successfully.');
     }
 
     /**
@@ -114,15 +120,21 @@ class SubjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Subject $subject): JsonResponse
+    public function destroy(Subject $subject): JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $this->authorize('delete', $subject);
 
         $subject->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Subject deleted successfully.',
-        ]);
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Subject deleted successfully.',
+            ]);
+        }
+
+        return redirect()
+            ->route('subjects.index')
+            ->with('success', 'Subject deleted successfully.');
     }
 }

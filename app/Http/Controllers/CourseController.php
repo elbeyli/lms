@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Subject;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class CourseController extends Controller
@@ -17,7 +18,7 @@ class CourseController extends Controller
     public function index(Request $request): JsonResponse|View
     {
         $query = Course::whereHas('subject', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', Auth::id());
         })->with(['subject:id,name,color', 'topics:id,course_id,name,is_completed,progress_percentage'])
             ->orderBy('priority', 'desc')
             ->orderBy('name');
@@ -47,7 +48,7 @@ class CourseController extends Controller
      */
     public function create(Request $request): View
     {
-        $subjects = Subject::where('user_id', auth()->id())
+        $subjects = Subject::where('user_id', Auth::id())
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name', 'color']);
@@ -60,21 +61,26 @@ class CourseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CourseRequest $request): JsonResponse
+    public function store(CourseRequest $request)
     {
         $subject = Subject::where('id', $request->subject_id)
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->firstOrFail();
 
         $course = Course::create($request->validated());
 
-        $course->load(['subject:id,name,color', 'topics:id,course_id,name,is_completed,progress_percentage']);
+        if ($request->expectsJson()) {
+            $course->load(['subject:id,name,color', 'topics:id,course_id,name,is_completed,progress_percentage']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Course created successfully.',
+                'data' => $course,
+            ], 201);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Course created successfully.',
-            'data' => $course,
-        ], 201);
+        return redirect()
+            ->route('courses.show', $course)
+            ->with('success', 'Course created successfully.');
     }
 
     /**
@@ -109,7 +115,7 @@ class CourseController extends Controller
     {
         $this->authorize('update', $course);
 
-        $subjects = Subject::where('user_id', auth()->id())
+        $subjects = Subject::where('user_id', Auth::id())
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name', 'color']);
@@ -125,7 +131,7 @@ class CourseController extends Controller
         $this->authorize('update', $course);
 
         $subject = Subject::where('id', $request->subject_id)
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->firstOrFail();
 
         $course->update($request->validated());
@@ -140,15 +146,21 @@ class CourseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Course $course): JsonResponse
+    public function destroy(Course $course): JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $this->authorize('delete', $course);
 
         $course->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Course deleted successfully.',
-        ]);
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Course deleted successfully.',
+            ]);
+        }
+
+        return redirect()
+            ->route('courses.index')
+            ->with('success', 'Course deleted successfully.');
     }
 }
