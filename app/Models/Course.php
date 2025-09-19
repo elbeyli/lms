@@ -47,4 +47,9 @@ class Course extends Model
     {
         return $this->hasMany(Topic::class)->where('is_active', true);
     }
+
+    public function studySessions(): HasMany
+    {
+        return $this->hasMany(StudySession::class);
+    }
 }

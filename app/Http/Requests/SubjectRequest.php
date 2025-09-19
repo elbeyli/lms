@@ -27,6 +27,7 @@ class SubjectRequest extends FormRequest
             'difficulty_base' => ['nullable', 'integer', 'min:1', 'max:10'],
             'total_hours_estimated' => ['nullable', 'integer', 'min:1'],
             'description' => ['nullable', 'string', 'max:1000'],
+            'final_exam_date' => ['nullable', 'date', 'after:today'],
             'is_active' => ['nullable', 'boolean'],
         ];
     }
@@ -48,6 +49,8 @@ class SubjectRequest extends FormRequest
             'total_hours_estimated.integer' => 'Estimated hours must be a number.',
             'total_hours_estimated.min' => 'Estimated hours must be at least 1.',
             'description.max' => 'Description cannot exceed 1000 characters.',
+            'final_exam_date.date' => 'Final exam date must be a valid date.',
+            'final_exam_date.after' => 'Final exam date must be in the future.',
         ];
     }
 }

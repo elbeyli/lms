@@ -18,6 +18,7 @@ class Subject extends Model
         'difficulty_base',
         'total_hours_estimated',
         'description',
+        'final_exam_date',
         'is_active',
     ];
 
@@ -26,6 +27,7 @@ class Subject extends Model
         return [
             'difficulty_base' => 'integer',
             'total_hours_estimated' => 'integer',
+            'final_exam_date' => 'datetime',
             'is_active' => 'boolean',
         ];
     }
@@ -43,5 +45,10 @@ class Subject extends Model
     public function activeCourses(): HasMany
     {
         return $this->hasMany(Course::class)->where('is_active', true);
+    }
+
+    public function studySessions(): HasMany
+    {
+        return $this->hasMany(StudySession::class);
     }
 }

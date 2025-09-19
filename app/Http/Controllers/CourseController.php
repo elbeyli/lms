@@ -63,7 +63,7 @@ class CourseController extends Controller
      */
     public function store(CourseRequest $request)
     {
-        $subject = Subject::where('id', $request->subject_id)
+        Subject::where('id', $request->subject_id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
@@ -71,16 +71,11 @@ class CourseController extends Controller
 
         if ($request->expectsJson()) {
             $course->load(['subject:id,name,color', 'topics:id,course_id,name,is_completed,progress_percentage']);
-            return response()->json([
-                'success' => true,
-                'message' => 'Course created successfully.',
-                'data' => $course,
-            ], 201);
+
+            return $this->successResponse('Course created successfully.', $course, 201);
         }
 
-        return redirect()
-            ->route('courses.show', $course)
-            ->with('success', 'Course created successfully.');
+        return redirect()->route('courses.show', $course)->with('success', 'Course created successfully.');
     }
 
     /**
@@ -95,7 +90,7 @@ class CourseController extends Controller
             'topics' => function ($query) {
                 $query->orderBy('difficulty')
                     ->orderBy('name');
-            }
+            },
         ]);
 
         if (request()->expectsJson()) {
@@ -126,21 +121,21 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CourseRequest $request, Course $course): JsonResponse
+    public function update(CourseRequest $request, Course $course): JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $this->authorize('update', $course);
 
-        $subject = Subject::where('id', $request->subject_id)
+        Subject::where('id', $request->subject_id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
         $course->update($request->validated());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Course updated successfully.',
-            'data' => $course,
-        ]);
+        if ($request->expectsJson()) {
+            return $this->successResponse('Course updated successfully.', $course);
+        }
+
+        return $this->redirectWithSuccess('courses.show', 'Course updated successfully.');
     }
 
     /**
@@ -153,14 +148,9 @@ class CourseController extends Controller
         $course->delete();
 
         if (request()->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Course deleted successfully.',
-            ]);
+            return $this->successResponse('Course deleted successfully.');
         }
 
-        return redirect()
-            ->route('courses.index')
-            ->with('success', 'Course deleted successfully.');
+        return $this->redirectWithSuccess('courses.index', 'Course deleted successfully.');
     }
 }

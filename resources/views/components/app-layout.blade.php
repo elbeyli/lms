@@ -1,14 +1,7 @@
 @props(['breadcrumbs' => null])
 
-{{-- Render the existing layouts.app view and forward the header, breadcrumbs and slot --}}
-@include('layouts.app', [
-    'breadcrumbs' => $breadcrumbs,
-    'header' => $header ?? null,
-    'slot' => $slot,
-])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,7 +16,6 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-
 <body class="font-sans antialiased bg-gray-50">
     <div class="min-h-screen">
         <!-- Navigation -->
@@ -64,6 +56,10 @@
                                 class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors {{ request()->routeIs('topics.*') ? 'text-blue-600 border-b-2 border-blue-600' : '' }}">
                                 Topics
                             </a>
+                            <a href="{{ route('sessions.index') }}"
+                                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors {{ request()->routeIs('sessions.*') ? 'text-blue-600 border-b-2 border-blue-600' : '' }}">
+                                Sessions
+                            </a>
                         @endauth
                     </div>
 
@@ -96,9 +92,9 @@
 
                                 <div x-show="open" @click.away="open = false" x-transition
                                     class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                    <a href="#"
+                                    <a href="{{ route('user.profile') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-                                    <a href="#"
+                                    <a href="{{ route('user.settings') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                                     <hr class="my-1">
                                     <form method="POST" action="{{ route('logout') }}">
@@ -153,7 +149,12 @@
                                 class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md">
                                 Topics
                             </a>
-                        @else
+                            <a href="{{ route('sessions.index') }}"
+                                class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md">
+                                Sessions
+                            </a>
+                        @endauth
+                        @guest
                             <a href="{{ route('login') }}"
                                 class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md">
                                 Login
@@ -162,7 +163,7 @@
                                 class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md">
                                 Register
                             </a>
-                        @endauth
+                        @endguest
                     </div>
                 </div>
             </div>

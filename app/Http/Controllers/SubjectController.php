@@ -56,16 +56,11 @@ class SubjectController extends Controller
 
         if ($request->expectsJson()) {
             $subject->load('courses:id,subject_id,name,is_active');
-            return response()->json([
-                'success' => true,
-                'message' => 'Subject created successfully.',
-                'data' => $subject,
-            ], 201);
+
+            return $this->successResponse('Subject created successfully.', $subject, 201);
         }
 
-        return redirect()
-            ->route('subjects.show', $subject)
-            ->with('success', 'Subject created successfully.');
+        return redirect()->route('subjects.show', $subject)->with('success', 'Subject created successfully.');
     }
 
     /**
@@ -104,17 +99,17 @@ class SubjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SubjectRequest $request, Subject $subject): JsonResponse
+    public function update(SubjectRequest $request, Subject $subject): JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $this->authorize('update', $subject);
 
         $subject->update($request->validated());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Subject updated successfully.',
-            'data' => $subject,
-        ]);
+        if ($request->expectsJson()) {
+            return $this->successResponse('Subject updated successfully.', $subject);
+        }
+
+        return $this->redirectWithSuccess('subjects.index', 'Subject updated successfully.');
     }
 
     /**
@@ -127,14 +122,9 @@ class SubjectController extends Controller
         $subject->delete();
 
         if (request()->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Subject deleted successfully.',
-            ]);
+            return $this->successResponse('Subject deleted successfully.');
         }
 
-        return redirect()
-            ->route('subjects.index')
-            ->with('success', 'Subject deleted successfully.');
+        return $this->redirectWithSuccess('subjects.index', 'Subject deleted successfully.');
     }
 }

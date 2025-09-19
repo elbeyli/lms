@@ -12,12 +12,30 @@
                     </svg>
                     New Subject
                 </a>
+                <a href="{{ route('courses.create') }}" class="btn-secondary">
+                    <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                    </svg>
+                    New Course
+                </a>
+                <a href="{{ route('topics.create') }}" class="btn-secondary">
+                    <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    New Topic
+                </a>
+                <a href="{{ route('sessions.create') }}" class="btn-success">
+                    <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Start Session
+                </a>
             </div>
         </div>
     </x-slot>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <!-- Total Subjects -->
         <div class="card">
             <div class="card-body">
@@ -92,7 +110,34 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-600">Overall Progress</p>
                         <p class="text-2xl font-semibold text-gray-900">{{ $stats['overall_progress'] }}%</p>
-                        <p class="text-xs text-gray-500">{{ $stats['completed_topics'] }} of {{ $stats['active_topics'] }} completed</p>
+                        <div class="flex items-center space-x-2">
+                            <p class="text-xs text-gray-500">{{ $stats['completed_topics'] }} of {{ $stats['active_topics'] }} completed</p>
+                            @if($stats['overall_progress'] > 0)
+                                <div class="w-12">
+                                    <x-progress-bar :value="$stats['overall_progress']" size="sm" />
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Sessions -->
+        <div class="card">
+            <div class="card-body">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Study Sessions</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{ $stats['sessions'] ?? 0 }}</p>
+                        <p class="text-xs text-gray-500">{{ $stats['active_sessions'] ?? 0 }} active</p>
                     </div>
                 </div>
             </div>
@@ -115,9 +160,10 @@
                             @foreach($recent_subjects as $subject)
                                 <div class="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
                                     <div class="flex items-center justify-between mb-3">
-                                        <div class="flex items-center">
-                                            <div class="w-4 h-4 rounded-full mr-3" style="background-color: {{ $subject->color }}"></div>
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-4 h-4 rounded-full" style="background-color: {{ $subject->color }}"></div>
                                             <h4 class="font-medium text-gray-900">{{ $subject->name }}</h4>
+                                            <x-difficulty-meter :value="$subject->difficulty_base" :max="10" size="sm" :showLabel="false" />
                                         </div>
                                         <a href="{{ route('subjects.show', $subject) }}" class="text-blue-600 hover:text-blue-700 text-sm">
                                             View →
@@ -133,9 +179,8 @@
                                                             {{ $course->completed_topics_count }}/{{ $course->topics_count }} topics
                                                         </span>
                                                         @if($course->topics_count > 0)
-                                                            <div class="w-16 h-2 bg-gray-200 rounded-full">
-                                                                <div class="h-2 bg-blue-500 rounded-full" style="width: {{ round(($course->completed_topics_count / $course->topics_count) * 100) }}%"></div>
-                                                            </div>
+                                                            @php $courseProgress = round(($course->completed_topics_count / $course->topics_count) * 100); @endphp
+                                                            <x-progress-bar :value="$courseProgress" size="sm" class="w-16" />
                                                         @endif
                                                     </div>
                                                 </div>
@@ -171,23 +216,45 @@
                 <div class="card-body">
                     @if($upcoming_deadlines->count() > 0)
                         <div class="space-y-3">
-                            @foreach($upcoming_deadlines as $course)
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-900">{{ $course->name }}</p>
-                                        <p class="text-xs text-gray-500">{{ $course->deadline->format('M j, Y') }}</p>
+                            @foreach($upcoming_deadlines as $deadline)
+                                <div class="flex items-center justify-between p-3 rounded-lg border
+                                    @if($deadline['type'] === 'final_exam')
+                                        border-purple-200 bg-purple-50
+                                    @else
+                                        border-gray-200 bg-gray-50
+                                    @endif
+                                ">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-3 h-3 rounded-full" style="background-color: {{ $deadline['subject_color'] }}"></div>
+                                        <div>
+                                            <div class="flex items-center space-x-2">
+                                                <p class="text-sm font-medium text-gray-900">{{ $deadline['name'] }}</p>
+                                                @if($deadline['type'] === 'final_exam')
+                                                    <span class="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded-full font-medium">
+                                                        FINAL
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <p class="text-xs text-gray-500">{{ $deadline['subject_name'] }} • {{ $deadline['deadline']->format('M j, Y g:i A') }}</p>
+                                        </div>
                                     </div>
                                     <div class="text-right">
-                                        <span class="text-xs px-2 py-1 rounded-full
-                                            @if($course->deadline->diffInDays() <= 3)
+                                        @php
+                                            $daysLeft = $deadline['deadline']->diffInDays();
+                                            $isUrgent = $daysLeft <= 3;
+                                            $isWarning = $daysLeft <= 7;
+                                            $isFinalExam = $deadline['type'] === 'final_exam';
+                                        @endphp
+                                        <span class="text-xs px-2 py-1 rounded-full font-medium
+                                            @if($isUrgent)
                                                 bg-red-100 text-red-800
-                                            @elseif($course->deadline->diffInDays() <= 7)
+                                            @elseif($isWarning || $isFinalExam)
                                                 bg-yellow-100 text-yellow-800
                                             @else
                                                 bg-green-100 text-green-800
                                             @endif
                                         ">
-                                            {{ $course->deadline->diffForHumans() }}
+                                            {{ $deadline['deadline']->diffForHumans() }}
                                         </span>
                                     </div>
                                 </div>
@@ -213,7 +280,7 @@
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm text-gray-900">{{ $topic->name }}</p>
                                         <p class="text-xs text-gray-500">{{ $topic->course->subject->name }} → {{ $topic->course->name }}</p>
-                                        <p class="text-xs text-gray-400">{{ $topic->updated_at->diffForHumans() }}</p>
+                                        <p class="text-xs text-gray-400">{{ $topic->updated_at?->diffForHumans() ?? 'Never updated' }}</p>
                                     </div>
                                     @if($topic->is_completed)
                                         <div class="flex-shrink-0">

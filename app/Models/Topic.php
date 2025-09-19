@@ -58,4 +58,9 @@ class Topic extends Model
             'completed_at' => $percentage >= 100 ? now() : null,
         ]);
     }
+
+    public function studySessions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(StudySession::class);
+    }
 }

@@ -19,8 +19,16 @@
     @apply bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm font-medium transition-colors;
 }
 
+.btn-success {
+    @apply bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors;
+}
+
 .btn-danger {
     @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors;
+}
+
+.btn-sm {
+    @apply px-3 py-1.5 text-xs;
 }
 
 .card {
@@ -45,4 +53,12 @@
 
 .form-error {
     @apply text-sm text-red-600 mt-1;
+}
+
+.form-range {
+    @apply block w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600;
+}
+
+[x-cloak] {
+    display: none;
 }

@@ -83,16 +83,11 @@ class TopicController extends Controller
 
         if ($request->expectsJson()) {
             $topic->load(['course:id,subject_id,name', 'course.subject:id,name,color']);
-            return response()->json([
-                'success' => true,
-                'message' => 'Topic created successfully.',
-                'data' => $topic,
-            ], 201);
+
+            return $this->successResponse('Topic created successfully.', $topic, 201);
         }
 
-        return redirect()
-            ->route('topics.show', $topic)
-            ->with('success', 'Topic created successfully.');
+        return redirect()->route('topics.show', $topic)->with('success', 'Topic created successfully.');
     }
 
     /**
@@ -141,7 +136,7 @@ class TopicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(TopicRequest $request, Topic $topic): JsonResponse
+    public function update(TopicRequest $request, Topic $topic): JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $this->authorize('update', $topic);
 
@@ -151,11 +146,11 @@ class TopicController extends Controller
 
         $topic->update($request->validated());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Topic updated successfully.',
-            'data' => $topic,
-        ]);
+        if ($request->expectsJson()) {
+            return $this->successResponse('Topic updated successfully.', $topic);
+        }
+
+        return $this->redirectWithSuccess('topics.show', 'Topic updated successfully.');
     }
 
     /**
@@ -168,15 +163,10 @@ class TopicController extends Controller
         $topic->delete();
 
         if (request()->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Topic deleted successfully.',
-            ]);
+            return $this->successResponse('Topic deleted successfully.');
         }
 
-        return redirect()
-            ->route('topics.index')
-            ->with('success', 'Topic deleted successfully.');
+        return $this->redirectWithSuccess('topics.index', 'Topic deleted successfully.');
     }
 
     /**
@@ -198,7 +188,7 @@ class TopicController extends Controller
     /**
      * Update topic progress.
      */
-    public function updateProgress(Request $request, Topic $topic): JsonResponse
+    public function updateProgress(Request $request, Topic $topic): JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $this->authorize('update', $topic);
 
@@ -208,10 +198,10 @@ class TopicController extends Controller
 
         $topic->updateProgress($request->progress);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Topic progress updated.',
-            'data' => $topic,
-        ]);
+        if ($request->expectsJson()) {
+            return $this->successResponse('Topic progress updated.', $topic);
+        }
+
+        return $this->redirectWithSuccess('topics.show', 'Topic progress updated.');
     }
 }

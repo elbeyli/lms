@@ -55,4 +55,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Subject::class)->where('is_active', true);
     }
+
+    public function studySessions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(StudySession::class);
+    }
+
+    public function activeStudySessions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(StudySession::class)->whereIn('status', ['active', 'paused']);
+    }
 }

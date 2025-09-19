@@ -15,90 +15,9 @@
     </x-slot>
 
     @if($subjects->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="space-y-6">
             @foreach($subjects as $subject)
-                <div class="card hover:shadow-md transition-shadow">
-                    <div class="card-body">
-                        <!-- Subject Header -->
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center">
-                                <div class="w-4 h-4 rounded-full mr-3" style="background-color: {{ $subject->color }}"></div>
-                                <h3 class="text-lg font-semibold text-gray-900">{{ $subject->name }}</h3>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div class="relative" x-data="{ open: false }">
-                                    <button @click="open = !open" class="text-gray-400 hover:text-gray-600">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
-                                        </svg>
-                                    </button>
-                                    <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                                        <a href="{{ route('subjects.show', $subject) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View Details</a>
-                                        <a href="{{ route('subjects.edit', $subject) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>
-                                        <a href="{{ route('courses.create', ['subject_id' => $subject->id]) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Add Course</a>
-                                        <hr class="my-1">
-                                        <button onclick="deleteSubject({{ $subject->id }})" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Delete</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Subject Description -->
-                        @if($subject->description)
-                            <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ $subject->description }}</p>
-                        @endif
-
-                        <!-- Subject Stats -->
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-gray-500">Difficulty Level</span>
-                                <div class="flex items-center">
-                                    @for($i = 1; $i <= 10; $i++)
-                                        <div class="w-2 h-2 rounded-full mr-1 {{ $i <= $subject->difficulty_base ? 'bg-blue-500' : 'bg-gray-200' }}"></div>
-                                    @endfor
-                                    <span class="ml-2 text-gray-700">{{ $subject->difficulty_base }}/10</span>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-gray-500">Courses</span>
-                                <span class="text-gray-900 font-medium">{{ $subject->courses->count() }}</span>
-                            </div>
-
-                            @if($subject->total_hours_estimated)
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-500">Estimated Hours</span>
-                                    <span class="text-gray-900 font-medium">{{ $subject->total_hours_estimated }}h</span>
-                                </div>
-                            @endif
-
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-gray-500">Status</span>
-                                <span class="px-2 py-1 rounded-full text-xs {{ $subject->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                    {{ $subject->is_active ? 'Active' : 'Inactive' }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div class="mt-4 pt-4 border-t border-gray-200">
-                            <div class="flex justify-between items-center">
-                                <a href="{{ route('subjects.show', $subject) }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                                    View Details →
-                                </a>
-                                @if($subject->courses->count() > 0)
-                                    <a href="{{ route('courses.index', ['subject_id' => $subject->id]) }}" class="text-gray-600 hover:text-gray-700 text-sm">
-                                        {{ $subject->courses->count() }} {{ Str::plural('course', $subject->courses->count()) }}
-                                    </a>
-                                @else
-                                    <a href="{{ route('courses.create', ['subject_id' => $subject->id]) }}" class="text-gray-500 hover:text-gray-600 text-sm">
-                                        Add first course
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <x-subject-card :subject="$subject" />
             @endforeach
         </div>
     @else
